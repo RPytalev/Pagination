@@ -1,32 +1,260 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+  <div class="container">
+    <header><h1>Pagination</h1></header>
+    <main>
+      <div class="search-area">
+        <input id="inputText" type="text" @change="saveInputText">
+        <div class="btn btn-search" role="button" @click="findInputText">Find text</div>
+      </div>
+      <table class="tab">
+        <thead>
+          <tr class="tableHead">
+            <th @click="sortProductListById">id</th>
+            <th @click="sortProductListByType">type</th>
+            <th @click="sortProductListByName">name</th>
+            <th @click="sortProductListByPrice">price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="good in displayedProductList" :key="good.id">
+            <td>{{ good.id }}</td>
+            <td>{{ good.type }}</td>
+            <td>{{ good.name }}</td>
+            <td>{{ good.price }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <nav class="nav">
+        <ul class="pagination">
+          <li>
+            <div id="prev" class="btn btn-pagination" role="button" @click="moveToPrevPage">Prev</div>
+          </li>
+          <li>
+            <div class="btn btn-pagination" role="button"
+            v-for="pageNum in pages.slice(page - 1, page + this.numOfPages)"
+            :key="pageNum"
+            @click="page = pageNum">
+            {{ pageNum }}</div>
+          </li>
+          <li>
+            <div id="next" class="btn btn-pagination" role="button" @click="moveToNextPage">Next</div>
+          </li>
+        </ul>
+      </nav>
+    </main>
+    <footer><p>&copy; Pytalev 2021</p></footer>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+export default {
+  name: 'App',
+  components: {
+  },
+  data () {
+    return {
+      goods: [],
+      page: 1,
+      perPage: 50,
+      pages: [],
+      inputText: '',
+      isSortedByID: false,
+      isSortedByType: false,
+      isSortedByName: false,
+      isSortedByPrice: false
     }
+  },
+  methods: {
+    getGoods () {
+      for (let i = 0; i < 50; i++) {
+        this.goods.push({ id: i + 1, type: 'Book' + i * 5, name: 'Peace' + i * 30, price: i * 21 })
+      }
+    },
+    setPages () {
+      for (let i = 1; i <= this.numOfPages; i++) {
+        this.pages.push(i)
+      }
+    },
+    paginate (goods) {
+      const page = this.page
+      const perPage = this.perPage
+      const from = (page - 1) * perPage
+      const to = from + perPage
+
+      return goods.slice(from, to)
+    },
+    moveToPrevPage () {
+      if (this.page > 1) {
+        this.page--
+      }
+    },
+    moveToNextPage () {
+      if (this.page < this.pages.length) {
+        this.page++
+      }
+    },
+    sortProductListById () {
+      console.log('Click on Id')
+
+      if (this.isSortedByID === true) {
+        this.goods.reverse()
+      } else {
+        this.goods.sort((a, b) => a.id - b.id)
+      }
+      this.isSortedByID = true
+    },
+    sortProductListByType () {
+      console.log('Click on Type')
+      if (this.isSortedByID === true) {
+        this.goods.reverse()
+      } else {
+        this.goods.sort((a, b) => a.id - b.id)
+      }
+      this.isSortedByID = true
+    },
+    sortProductListByName () {
+      console.log('Click on Name')
+      if (this.isSortedByID === true) {
+        this.goods.reverse()
+      } else {
+        this.goods.sort((a, b) => a.id - b.id)
+      }
+      this.isSortedByID = true
+    },
+    sortProductListByPrice () {
+      console.log('Click on Price')
+      if (this.isSortedByID === true) {
+        this.goods.reverse()
+      } else {
+        this.goods.sort((a, b) => a.id - b.id)
+      }
+      this.isSortedByID = true
+    },
+    saveInputText (event) {
+      this.inputText = event.target.value
+    },
+    findInputText () {
+      return this.goods.filter(item => +item.id === +this.inputText ||
+                                       item.type.includes(this.inputText) ||
+                                       item.name.includes(this.inputText) ||
+                                       item.price === this.inputText)
+    }
+  },
+  computed: {
+    // goods () {
+    //   return this.$store.state.goods
+    // },
+    displayedProductList () {
+      if (this.inputText !== '') {
+        return this.paginate(this.findInputText(this.goods))
+      } else {
+        return this.paginate(this.goods)
+      }
+    },
+    numOfPages () {
+      return Math.ceil(this.goods.length / this.perPage)
+    }
+  },
+  created () {
+    this.getGoods()
+    this.setPages()
   }
 }
+</script>
+
+<style lang="sass">
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap')
+
+.container
+  box-sizing: border-box
+  max-width: 1200px
+  height: 100vh
+  margin: 0 auto
+  padding: 0 15px
+  background-color: lightgray
+  overflow: auto
+  scroll-behavior: smooth
+
+  .btn
+    border: .1rem solid
+    margin: 0 .1rem
+    cursor: pointer
+
+  header
+    width: 100%
+    background-color: #000
+    color: #fff
+    line-height: 5rem
+    vertical-align: middle
+    text-align: center
+
+  main
+    display: flex
+    flex-flow: column wrap
+    width: 100%
+    background-color: #fff
+
+    .search-area
+      display: flex
+      justify-content: center
+      align-items: center
+
+      input
+        outline-style: none
+        caret-color: #ff7800
+        color: #ff7800
+
+      .btn-search
+        padding: .1rem .5rem
+        border-radius: .3rem
+        background-color: #ff7800
+        color: #fff
+
+    table
+      width: 100%
+      background-color: #hhh
+
+      .tableHead
+        background-color: #c4c4c4
+
+      tr
+        height: 1rem
+
+        th, td
+          border: .1rem solid
+
+    nav
+      display: flex
+      width: 100%
+
+      ul
+        display: flex
+        width: 100%
+        padding-left: 0
+        justify-content: center
+
+        li
+          display: flex
+          list-style: none
+
+          #prev, #next
+            width: 4rem
+
+          .btn-pagination
+            width: 1rem
+            height: 1rem
+            margin: .1rem
+            text-align: center
+            line-height: 1rem
+            vertical-align: middle
+            background-color: #ff7800
+            color: #fff
+
+  footer
+    width: 100%
+    background-color: #000
+    color: #fff
+    line-height: 5rem
+    vertical-align: middle
+    text-align: center
 </style>
