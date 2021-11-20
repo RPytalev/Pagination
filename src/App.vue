@@ -64,7 +64,7 @@ export default {
   methods: {
     getGoods () {
       for (let i = 0; i < 250; i++) {
-        this.goods.push({ id: i + 1, type: 'Book' + i * 5, name: 'Peace' + i * 30, price: i * 21 })
+        this.goods.push({ id: (250 - i), type: 'Book' + i * 5, name: 'Peace' + i * 30, price: i * 21 })
       }
     },
     setPages () {
