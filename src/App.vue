@@ -8,11 +8,11 @@
       </div>
       <table class="tab">
         <thead>
-          <tr class="tableHead">
-            <th @click="sortProductListById">id</th>
-            <th @click="sortProductListByType">type</th>
-            <th @click="sortProductListByName">name</th>
-            <th @click="sortProductListByPrice">price</th>
+          <tr class="table-header" @click="sortProductList">
+            <th class="column-header">id</th>
+            <th class="column-header">type</th>
+            <th class="column-header">name</th>
+            <th class="column-header">price</th>
           </tr>
         </thead>
         <tbody>
@@ -58,15 +58,12 @@ export default {
       perPage: 50,
       pages: [],
       inputText: '',
-      isSortedByID: false,
-      isSortedByType: false,
-      isSortedByName: false,
-      isSortedByPrice: false
+      isProductListSorted: false
     }
   },
   methods: {
     getGoods () {
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 250; i++) {
         this.goods.push({ id: i + 1, type: 'Book' + i * 5, name: 'Peace' + i * 30, price: i * 21 })
       }
     },
@@ -93,42 +90,13 @@ export default {
         this.page++
       }
     },
-    sortProductListById () {
-      console.log('Click on Id')
-
-      if (this.isSortedByID === true) {
+    sortProductList () {
+      if (this.isProductListSorted === true) {
         this.goods.reverse()
       } else {
         this.goods.sort((a, b) => a.id - b.id)
       }
-      this.isSortedByID = true
-    },
-    sortProductListByType () {
-      console.log('Click on Type')
-      if (this.isSortedByID === true) {
-        this.goods.reverse()
-      } else {
-        this.goods.sort((a, b) => a.id - b.id)
-      }
-      this.isSortedByID = true
-    },
-    sortProductListByName () {
-      console.log('Click on Name')
-      if (this.isSortedByID === true) {
-        this.goods.reverse()
-      } else {
-        this.goods.sort((a, b) => a.id - b.id)
-      }
-      this.isSortedByID = true
-    },
-    sortProductListByPrice () {
-      console.log('Click on Price')
-      if (this.isSortedByID === true) {
-        this.goods.reverse()
-      } else {
-        this.goods.sort((a, b) => a.id - b.id)
-      }
-      this.isSortedByID = true
+      this.isProductListSorted = true
     },
     saveInputText (event) {
       this.inputText = event.target.value
@@ -141,9 +109,6 @@ export default {
     }
   },
   computed: {
-    // goods () {
-    //   return this.$store.state.goods
-    // },
     displayedProductList () {
       if (this.inputText !== '') {
         return this.paginate(this.findInputText(this.goods))
@@ -214,7 +179,7 @@ export default {
       width: 100%
       background-color: #hhh
 
-      .tableHead
+      .table-header
         background-color: #c4c4c4
 
       tr
@@ -222,6 +187,12 @@ export default {
 
         th, td
           border: .1rem solid
+
+        .column-header
+          cursor: pointer
+
+        .column-header:hover
+          background-color: #a4a4a4
 
     nav
       display: flex
